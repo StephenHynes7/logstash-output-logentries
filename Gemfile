@@ -1,4 +1,3 @@
 source 'https://rubygems.org'
 gemspec
-
-gem 'logstash-output-logentries', :github => 'siniar1990/logstash-output-logentries'
+gem "logstash", :github => "elasticsearch/logstash", :branch => "1.5"
