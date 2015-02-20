@@ -21,4 +21,5 @@ You can find the instructions about Token based input [here](https://logentries.
 ## Need Help?
 
 Try #logstash on freenode IRC or the logstash-users@googlegroups.com mailing 
+
 You can also refer to [Logentries DOCs](https://logentries.com/doc/)
