@@ -1,8 +1,6 @@
 require "logstash/outputs/base"
 require "logstash/namespace"
-require "uri"
-require "net/http"
-require "net/https"
+require "socket"
 
 
 
@@ -34,32 +32,16 @@ class LogStash::Outputs::Logentries < LogStash::Outputs::Base
             return
         end
         
-        # Send the event using token
-        url = URI.parse("https://js.logentries.com/v1/logs/#{event.sprintf(@token)}")
+        # Open socket
+        sock = TCPSocket.new('data.logentries.com', 80)
         
-        # Debug the URL here
+        # Debug
         @logger.info("Sending using #{event.sprintf(@token)} Logentries Token")
-        
-        # Open HTTP connection
-        http = Net::HTTP.new(url.host, url.port)
-        
-        # Use secure SSL
-        if url.scheme == 'https'
-            http.use_ssl = true
-            http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+        # Prepend the message body with token and write
+        sock.write(event.sprintf(@token) + event)
+        sock.close
         end
-        
-        request = Net::HTTP::Post.new(url.path)
-        
-        #Prepend the message body with "event" to allow the js.logentries to pick it up
-        request.body = "{\"event\":" + event.to_json + "}"
-        response = http.request(request)
-        
-        if response.is_a?(Net::HTTPSuccess)
-            @logger.info("Event Sent!")
-            else
-            @logger.warn("HTTP error", :error => response.error!)
-        end
-        
+
     end # receive
 end #LogStash::Outputs::Logentries
